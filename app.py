@@ -8,12 +8,16 @@ app = Flask(__name__)
 
 # ページルーティング
 @app.route('/')
-def redirect_index():
-    return redirect(url_for('compose'))
+def page_redirect_index():
+    return redirect(url_for('page_compose'))
 
 @app.route('/compose')
-def compose():
+def page_compose():
     return render_template('compose.jinja.html')
+
+@app.route('/appreciation')
+def page_read():
+    return render_template('appreciation.jinja.html')
 
 # APIルーティング
 @app.route('/shichigo', methods=['GET', 'POST'])
@@ -22,3 +26,5 @@ def shichigo():
         # cur = conx.cursor()
         # cur.execute('INSERT INTO shichigo PARAM')
     return ''
+
+app.run('0.0.0.0', 5000, True, False)
