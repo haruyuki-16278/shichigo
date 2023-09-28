@@ -1,11 +1,13 @@
 import uvicorn
 import datetime
 from fastapi import FastAPI, Query, Form
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.requests import Request
 from fastapi.templating import Jinja2Templates
 import sqlite3
-import json
+
+SHICHIGO_COLUMNS = ['id', 'poem', 'writer', 'fav', 'replies', 'ts']
+PAGING_AMOUNT = 20
 
 dbname = 'shichigo.db'
 conx = sqlite3.connect(dbname)
@@ -31,35 +33,38 @@ async def page_compose(req: Request):
     )
 
 @app.get('/appreciation', response_class=HTMLResponse)
-async def page_appreciation(req: Request):
-    return templates.TemplateResponse('appreciation.jinja.html', {'request': req})
-
-# APIルーティング
-@app.get('/shichigo', response_class=JSONResponse)
-async def get_shichigo(timestamp: str = Query(default='0')):
-    param = {
-        'timestamp': timestamp
-                        if timestamp != '0'
-                        else datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    }
-    print(param)
+async def page_appreciation(req: Request, timestamp: str = Query(default='0')):
+    param = {'timestamp': timestamp
+                            if timestamp != '0'
+                            else datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
     cur = conx.cursor()
     try:
         cur.execute(
             'SELECT * FROM shichigo\
                 WHERE ts < ? \
-                LIMIT 20',
-            [param['timestamp']]
+                ORDER BY id DESC\
+                LIMIT ?',
+            [param['timestamp'], PAGING_AMOUNT]
         )
         res = cur.fetchall()
-        print(res)
-        return json.dumps(res)
+        shichigos = [dict(zip(SHICHIGO_COLUMNS, shichigo)) for shichigo in res]
+        print(shichigos)
+        return templates.TemplateResponse(
+            'appreciation.jinja.html',
+            {
+                'request': req,
+                'shichigos': shichigos,
+                'available_next': len(shichigos) >= PAGING_AMOUNT,
+                'last_poem_created_at': shichigos[-1]['ts']
+            }
+        )
     except Exception as e:
         print(e)
-        return {'error': 'E-001'}
+        # return templates.TemplateResponse()
     finally:
         cur.close()
 
+# APIルーティング
 @app.post('/shichigo', response_class=HTMLResponse)
 async def post_shichigo(req: Request, poem: str = Form(), writer: str = Form()):
     cur = conx.cursor()

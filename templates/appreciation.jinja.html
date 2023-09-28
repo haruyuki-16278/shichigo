@@ -1,2 +1,16 @@
 {% extends 'base.jinja.html' %}
 {% block title %}shichigoを観る{% endblock %}
+{% block main %}
+<ol>
+  {% for shichigo in shichigos %}
+    <li>
+      <p>{{ shichigo.poem }}</p>
+      <p>by {{ shichigo.writer }} <span>{{ shichigo.ts }}</span></p>
+    </li>
+  {% endfor %}
+</ol>
+{% if available_next %}
+<a href="/appreciation?timestamp={{ last_poem_created_at }}">もっと前のshichigoも読む</a><br>
+<a href="/appreciation?timestamp=0">最新に戻る</a>
+{% endif %}
+{% endblock %}
