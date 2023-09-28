@@ -2,9 +2,14 @@
 {% block title %}shichigoを詠む{% endblock %}
 {% block main %}
 <h2>詠む</h2>
-<form>
-  <input type="text" placeholder="五七五を作る">
-  <input type="text" placeholder="読みを記す">
-  <input type="button" value="詠む">
+{% if succeed %}
+  <p>shichigoを詠みました。確認は<a href="/appreciation">こちら</a>から。</p>
+{% elif failed %}
+  <p>何故かshichigoを詠めませんでした。再度詠んでみてください。</p>
+{% endif %}
+<form action="/shichigo" method="post">
+  <input type="text" name="poem" autocomplete="off" placeholder="五七五を入力"><br>
+  <input type="text" name="writer" placeholder="詠み手の名前を入力"><br>
+  <input type="submit" value="詠む">
 </form>
 {% endblock %}

@@ -1,16 +1,11 @@
 import uvicorn
 import datetime
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Form
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.requests import Request
 from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel
 import sqlite3
 import json
-
-class Shichigo(BaseModel):
-    poem: str
-    writer: str
 
 dbname = 'shichigo.db'
 conx = sqlite3.connect(dbname)
@@ -26,7 +21,14 @@ async def page_redirect_index():
 
 @app.get('/compose', response_class=HTMLResponse)
 async def page_compose(req: Request):
-    return templates.TemplateResponse('compose.jinja.html', {'request': req})
+    return templates.TemplateResponse(
+        'compose.jinja.html',
+        {
+            'succeed': False,
+            'failed': False,
+            'request': req
+        }
+    )
 
 @app.get('/appreciation', response_class=HTMLResponse)
 async def page_appreciation(req: Request):
@@ -58,8 +60,8 @@ async def get_shichigo(timestamp: str = Query(default='0')):
     finally:
         cur.close()
 
-@app.post('/shichigo')
-async def post_shichigo(shichigo: Shichigo):
+@app.post('/shichigo', response_class=HTMLResponse)
+async def post_shichigo(req: Request, poem: str = Form(), writer: str = Form()):
     cur = conx.cursor()
     try:
         cur.execute(
@@ -68,12 +70,27 @@ async def post_shichigo(shichigo: Shichigo):
                     ?,\
                     ?\
                 )',
-            [shichigo.poem, shichigo.writer]
+            [poem, writer]
         )
         conx.commit()
-        return {'message': 'success'}
+        return templates.TemplateResponse(
+            'compose.jinja.html',
+            {
+                'succeed': True,
+                'failed': False,
+                'request': req
+            }
+        )
     except Exception as e:
-        return {'error': 'E-001'}
+        print(e)
+        return templates.TemplateResponse(
+            'compose.jinja.html',
+            {
+                'succeed': False,
+                'failed': True,
+                'request': req
+            }
+        )
     finally:
         cur.close()
 
