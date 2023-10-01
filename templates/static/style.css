@@ -139,6 +139,12 @@ main {
             }
           }
         }
+        :is(p).info {
+          display: flex;
+          gap: 8px;
+          justify-content: right;
+          align-items: baseline;
+        }
       }
     }
   }
