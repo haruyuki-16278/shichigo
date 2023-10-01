@@ -4,6 +4,7 @@ from fastapi import FastAPI, Query, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.requests import Request
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 import sqlite3
 
 SHICHIGO_COLUMNS = ['id', 'poem', 'writer', 'fav', 'replies', 'ts']
@@ -15,6 +16,13 @@ conx = sqlite3.connect(dbname)
 app = FastAPI()
 
 templates = Jinja2Templates(directory="templates")
+
+# 静的ファイル配信
+app.mount(
+    '/templates/static',
+    StaticFiles(directory='templates/static'),
+    name='static'
+)
 
 # ページルーティング
 @app.get('/', response_class=RedirectResponse)

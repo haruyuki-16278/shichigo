@@ -1,11 +1,16 @@
 {% extends 'base.jinja.html' %}
 {% block title %}shichigoを観る{% endblock %}
 {% block main %}
+<h2>観る</h2>
 <ol>
   {% for shichigo in shichigos %}
     <li>
-      <p>{{ shichigo.poem }}</p>
-      <p>by {{ shichigo.writer }} <span>{{ shichigo.ts }}</span></p>
+      <p class="poem">
+        {% for sentence in shichigo.poem.split(' ') %}
+          <span>{{ sentence }}</span>
+        {% endfor %}
+      </p>
+      <p class="info">by {{ shichigo.writer }} <span class="timestamp">{{ shichigo.ts }}</span></p>
     </li>
   {% endfor %}
 </ol>

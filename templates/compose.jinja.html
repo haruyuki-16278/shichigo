@@ -3,13 +3,13 @@
 {% block main %}
 <h2>詠む</h2>
 {% if succeed %}
-  <p>shichigoを詠みました。確認は<a href="/appreciation">こちら</a>から。</p>
+  <p class="message">shichigoを詠みました。確認は<a href="/appreciation">こちら</a>から。</p>
 {% elif failed %}
-  <p>何故かshichigoを詠めませんでした。再度詠んでみてください。</p>
+  <p class="message">何故かshichigoを詠めませんでした。再度詠んでみてください。</p>
 {% endif %}
 <form action="/shichigo" method="post">
-  <input type="text" name="poem" autocomplete="off" placeholder="五七五を入力"><br>
-  <input type="text" name="writer" placeholder="詠み手の名前を入力"><br>
+  <input type="text" name="poem" autocomplete="off" placeholder="五七五を入力" required>
+  <input type="text" name="writer" placeholder="詠み手の名前を入力" required>
   <input type="submit" value="詠む">
 </form>
 {% endblock %}

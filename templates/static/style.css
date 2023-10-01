@@ -1,0 +1,159 @@
+* {
+  margin: 0;
+  font-family: 'Zen Kaku Gothic Antique', sans-serif;
+}
+
+html, body{
+  max-width: 100svw;
+  height: 100%;
+  min-height: 100svh;
+  display: grid;
+  grid-template:  'header'  auto
+                  'main'    1fr
+                  'footer'  auto
+                  / 1fr;
+  overflow: hidden;
+}
+
+header {
+  grid-area: header;
+  width: 100%;
+  border-bottom: 2px solid lightgray;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+
+  :is(nav) {
+    :is(ul) {
+      display: flex;
+      list-style-type: none;
+
+      :is(li) {
+        margin-left: 16px;
+
+        :is(a) {
+          text-decoration: none;
+
+          & :visited {
+            color: inherit;
+          }
+        }
+      }
+    }
+  }
+}
+
+main {
+  grid-area: main;
+  padding-top: 16px;
+  padding-inline: 64px;
+  overflow: scroll;
+
+  & :is(h2), :is(p) {
+    margin-bottom: 16px;
+  }
+
+  & :is(p).message {
+    border: 2px solid lightgray;
+    border-radius: 8px;
+    padding: 8px;
+  }
+
+  & :is(form) {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    & :is(input)[type="text"] {
+      width: 100%;
+      margin-bottom: 8px;
+      border: 2px solid lightgray;
+      border-radius: 100vh;
+      padding: 8px 16px;
+    }
+
+    & :is(input)[type="submit"] {
+      width: fit-content;
+      border: 2px solid lightgray;
+      border-radius: 100vh;
+      padding: 8px 16px;
+
+      &:hover {
+        cursor: pointer;
+        border: 2px solid black;
+      }
+    }
+  }
+
+  :is(ol) {
+    padding: 0;
+    list-style: none;
+
+    :is(li) {
+      margin-bottom: 16px;
+      border: 2px solid lightgray;
+      border-radius: 8px;
+      padding: 8px;
+
+
+      :is(p) {
+        margin: 0;
+
+        &.poem {
+          margin-bottom: 8px;
+        }
+
+        &.info {
+          font-size: 12px;
+
+          :is(span).timestamp {
+            font-size: 10px;
+            color: gray;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 500px) {
+  main {
+    :is(ol) {
+      :is(li) {
+        :is(p).poem {
+          display: flex;
+          flex-direction: column;
+
+          :is(span) {
+            width: 100%;
+
+            &:nth-child(1) {
+              text-align: left;
+            }
+            &:nth-child(2) {
+              text-align: center;
+            }
+            &:nth-child(3) {
+              text-align: right;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+footer {
+  grid-area: footer;
+  width: 100%;
+  height: fit-content;
+  border-top: 2px solid lightgray;
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+
+  :is(span).copyright {
+    font-size: 10px;
+  }
+}
