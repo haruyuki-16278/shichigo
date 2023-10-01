@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 import sqlite3
 
 SHICHIGO_COLUMNS = ['id', 'poem', 'writer', 'fav', 'replies', 'ts']
-PAGING_AMOUNT = 20
+PAGING_AMOUNT = 10
 
 dbname = 'shichigo.db'
 conx = sqlite3.connect(dbname)
@@ -56,19 +56,20 @@ async def page_appreciation(req: Request, timestamp: str = Query(default='0')):
         )
         res = cur.fetchall()
         shichigos = [dict(zip(SHICHIGO_COLUMNS, shichigo)) for shichigo in res]
-        print(shichigos)
+        print(shichigos, len(shichigos))
         return templates.TemplateResponse(
             'appreciation.jinja.html',
             {
                 'request': req,
                 'shichigos': shichigos,
+                'available_shichigoes': len(shichigos) > 0,
                 'available_next': len(shichigos) >= PAGING_AMOUNT,
-                'last_poem_created_at': shichigos[-1]['ts']
+                'last_poem_created_at': shichigos[-1]['ts'] if len(shichigos) > 0 else 0
             }
         )
     except Exception as e:
         print(e)
-        # return templates.TemplateResponse()
+        print(e.__traceback__)
     finally:
         cur.close()
 

@@ -2,20 +2,28 @@
 {% block title %}shichigoを観る{% endblock %}
 {% block main %}
 <h2>観る</h2>
-<ol>
-  {% for shichigo in shichigos %}
-    <li>
-      <p class="poem">
-        {% for sentence in shichigo.poem.split(' ') %}
-          <span>{{ sentence }}</span>
-        {% endfor %}
-      </p>
-      <p class="info">by {{ shichigo.writer }} <span class="timestamp">{{ shichigo.ts }}</span></p>
-    </li>
-  {% endfor %}
-</ol>
-{% if available_next %}
-<a href="/appreciation?timestamp={{ last_poem_created_at }}">もっと前のshichigoも読む</a><br>
-<a href="/appreciation?timestamp=0">最新に戻る</a>
+{% if available_shichigoes %}
+  <ol>
+    {% for shichigo in shichigos %}
+      <li>
+        <p class="poem">
+          {% for sentence in shichigo.poem.split(' ') %}
+            <span>{{ sentence }}</span>
+          {% endfor %}
+        </p>
+        <p class="info">by {{ shichigo.writer }} <span class="timestamp">{{ shichigo.ts }}</span></p>
+      </li>
+    {% endfor %}
+  </ol>
+{% else %}
+  <p class="message">
+    表示するshichigoがありません
+  </p>
 {% endif %}
+<div class="moveto">
+  {% if available_next %}
+  <a href="/appreciation?timestamp={{ last_poem_created_at }}">もっと前のshichigoも読む</a>
+  {% endif %}
+  <a href="/appreciation?timestamp=0">最新に戻る</a>
+</div>
 {% endblock %}
